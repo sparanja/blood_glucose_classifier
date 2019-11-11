@@ -1,5 +1,5 @@
 '''
-Authors: Sumanth Paranjape, Sameena Hossain
+Authors: Sumanth Paranjape
 Function: * Preprocesses data from meal and noMeal csv files, reduces number of dimensions 
           using PCA. 
           * Trains two models using k nearest neighbor and desicion tree classifiers
