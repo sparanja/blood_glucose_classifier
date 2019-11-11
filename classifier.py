@@ -4,7 +4,6 @@ Function: * Preprocesses data from meal and noMeal csv files, reduces number of 
           using PCA. 
           * Trains two models using k nearest neighbor and desicion tree classifiers
 Libraries: pandas, numpy, scipy, sckit-learn
-#New change
 '''
 import pandas as pd
 import numpy as np
@@ -57,9 +56,8 @@ def extractFeatures(mergedFrame, mealLabel):
         i = 0
         for feature in getFeatureNames():
             features[feature] = featureList[i]
-            i += 1            
+            i += 1
         featureMatrix = featureMatrix.append(features, ignore_index=True)
-    print(features)
     return featureMatrix
 
 def averageCGMFoodIntake(cgmList):
@@ -101,34 +99,29 @@ def reduceDimensions(featureMatrix):
     normalize = featureMatrix.loc[:, features[0:len(features)-1]].values
     normalize = StandardScaler().fit_transform(normalize)
     #print(normalize)
-    pca = PCA(n_components=5)
+    pca = PCA(n_components=3)
     principleComponents = pca.fit_transform(normalize)
-    reducedDF = pd.DataFrame(data = principleComponents, columns = ['PC1', 'PC2', 'PC3', 'PC4', 'PC5'])
+    reducedDF = pd.DataFrame(data = principleComponents, columns = ['PC1', 'PC2', 'PC3'])
     reducedDF['Meal'] = mealLabelCol
     return reducedDF
 
 def k_nearest_neighbor_classifier(featureMatrix):
     print("============K nearest neighbor classifier====================")
     X = featureMatrix.iloc[:, :-1].values
-    y = featureMatrix.iloc[:, 5].values
-    print('X value:')
-    print(X)
-    print('y value:')
-    print(y)
+    y = featureMatrix.iloc[:, 3].values
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15)
      
     classifier = KNeighborsClassifier(n_neighbors=7)
     classifier.fit(X_train, y_train)
     
     y_pred = classifier.predict(X_test)
-    print(y_pred)
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
     
 def desicion_tree_classifier(featureMatrix):
     print("============Desicion Tree classifier====================")
     X = featureMatrix.iloc[:, :-1].values
-    y = featureMatrix.iloc[:, 5].values
+    y = featureMatrix.iloc[:, 3].values
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15)
     clf = DecisionTreeClassifier(criterion="gini", max_depth=3)
 
@@ -137,14 +130,13 @@ def desicion_tree_classifier(featureMatrix):
 
     #Predict the response for test dataset
     y_pred = clf.predict(X_test)
-    print(y_pred)
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
     
 def neural_net_classifier(featureMatrix):
     print("=================Neural Net Classifier====================")
     X = featureMatrix.iloc[:, :-1].values
-    y = featureMatrix.iloc[:, 5].values
+    y = featureMatrix.iloc[:, 3].values
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15)
     clf= MLPClassifier(hidden_layer_sizes=(3,), activation='logistic',
                        solver='adam', alpha=0.0001,learning_rate='constant', 
@@ -156,27 +148,24 @@ def neural_net_classifier(featureMatrix):
 
     #Predict the response for test dataset
     y_pred = mlp.predict(X_test)
-    print(y_pred)
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
     
 def support_vector_machine(featureMatrix):
     print("=================Support Vector Machine Classifier====================")
     X = featureMatrix.iloc[:, :-1].values
-    y = featureMatrix.iloc[:, 5].values
+    y = featureMatrix.iloc[:, 3].values
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15)
     svclassifier = SVC(kernel='linear')
     svclassifier.fit(X_train, y_train)
     y_pred = svclassifier.predict(X_test)
-    
-    print(y_pred)
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
     
 def random_forest_classifier(featureMatrix):
     print("=================Random Forest Classifier====================")
     X = featureMatrix.iloc[:, :-1].values
-    y = featureMatrix.iloc[:, 5].values
+    y = featureMatrix.iloc[:, 3].values
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15)
     clf=RandomForestClassifier(n_estimators=100)
 
@@ -184,8 +173,6 @@ def random_forest_classifier(featureMatrix):
     clf.fit(X_train,y_train)
 
     y_pred = clf.predict(X_test)
-    
-    print(y_pred)
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
     
